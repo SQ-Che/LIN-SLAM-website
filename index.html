@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="LIN-SLAM couples lightweight LiDAR–inertial estimation with neural implicit mapping for real-time onboard navigation. Research, results, and source code.">
+  <meta name="theme-color" content="#087f6c">
+  <meta property="og:title" content="LIN-SLAM — Real-Time Onboard Neural SLAM">
+  <meta property="og:description" content="Lightweight geometric estimation meets neural implicit mapping. Twelve public sequences and kilometer-scale Go2 deployment.">
+  <meta property="og:type" content="website">
+  <title>LIN-SLAM | Lightweight LiDAR–Inertial Neural SLAM</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="site.js" defer></script>
+  <script src="explore.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <nav class="nav wrap" aria-label="Main navigation">
+      <a class="wordmark" href="#top">LIN<span>–</span>SLAM<span class="brand-dot"></span></a>
+      <div class="nav-links"><a href="#method">Method</a><a href="#results">Results</a><a href="#deployment">Onboard</a><a href="#resources">Resources</a><a href="#citation">Cite</a></div>
+      <a class="nav-code" href="https://github.com/SQ-Che/LIN-SLAM">GitHub <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+  <main id="main">
+    <section class="hero wrap" id="top" aria-labelledby="title">
+      <p class="eyebrow"><span class="status-dot"></span> Submitted to IEEE RA-L</p>
+      <h1 id="title"><span class="title-name">LIN-SLAM</span><br>Lightweight LiDAR–Inertial Neural SLAM<br class="desktop-break"> for Real-Time Onboard Navigation</h1>
+      <p class="authors">Shiqi Che <span>·</span> Yijie Liu <span>·</span> Shuo Wang <span>·</span> Wenxin Liu</p>
+      <p class="affiliation">School of Automation Science and Electrical Engineering<br>Beihang University, Beijing, China</p>
+      <div class="hero-actions"><a class="button primary" href="https://arxiv.org/pdf/2610.21199">Paper (PDF)</a><a class="button" href="https://arxiv.org/abs/2610.21199">arXiv</a><a class="button" href="https://github.com/SQ-Che/LIN-SLAM"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 6-6 6 6 6m8-12 6 6-6 6M14 3l-4 18"/></svg>Code</a><a class="button film-link" href="#deployment-films"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 11 7-11 7Z"/></svg>Watch mapping</a><a class="button" href="#resources">Resources <span aria-hidden="true">↗</span></a></div>
+    </section>
+
+    <section class="overview wrap" aria-labelledby="overview-title">
+      <div class="overview-intro"><p class="eyebrow">From local motion to a learned global map</p><h2 id="overview-title">Real-time neural mapping on board.</h2><p>High-rate LiDAR–inertial estimation with asynchronous neural tracking and mapping.</p></div>
+      <div class="teaser">
+        <div class="teaser-platform"><span class="figure-label">THE PLATFORM</span><div class="figure-image"><img src="assets/platform.png" alt="Unitree Go2 carrying a Hesai XT16 LiDAR and a Jetson Orin NX computer." width="1708" height="1280" fetchpriority="high"></div><p>Unitree Go2 <span> / </span> Hesai XT16 <span> / </span> Jetson Orin NX</p></div>
+        <div class="teaser-map"><span class="figure-label">THE LEARNED ENVIRONMENT</span><div class="figure-image"><img src="assets/onboard-maps.png" alt="Global neural point maps and final trajectories for Corridor and Basement, alongside photographs of the environments." width="8592" height="2820" fetchpriority="high"></div><p>Global neural point maps with the final LIN-SLAM trajectories.</p></div>
+        <div class="teaser-flow"><span>LiDAR + IMU</span><span aria-hidden="true">→</span><span>Geometric frontend</span><span aria-hidden="true">→</span><span>Neural tracking &amp; mapping</span><span aria-hidden="true">→</span><span>Global refinement</span></div>
+      </div>
+      <div class="stats"><div><strong>12<span> sequences</span></strong><p>32-, 64-, and 128-channel LiDAR</p></div><div><strong>49.2<span> ms/frame</span></strong><p>Mean profiling time · Stereo-Cam</p></div><div><strong>1.47<span> km onboard</span></strong><p>Continuous Corridor deployment</p></div></div>
+      <p class="metric-note">A frame is one complete physical LiDAR revolution. Workstation profiling time is not frontend output latency or Orin timing.</p>
+      <div class="contributions"><article><span class="number">01</span><h3>Lightweight LiDAR–inertial frontend</h3><p>High-rate geometric estimation provides local motion, posterior-consistent scans, and uncertainty.</p></article><article><span class="number">02</span><h3>Efficient neural implicit mapping</h3><p>Fused C++/CUDA computation and bounded workloads support continual learning of a neural SDF.</p></article><article><span class="number">03</span><h3>Real-time onboard SLAM</h3><p>Localization and neural mapping run together at the original sensor rate on an Orin NX.</p></article></div>
+    </section>
+
+    <section id="abstract" class="section abstract-section wrap" aria-labelledby="abstract-title">
+      <div class="section-heading"><p class="eyebrow">The idea</p><h2 id="abstract-title">Abstract</h2></div>
+      <div class="abstract-copy"><p>Geometric light detection and ranging (LiDAR)–inertial simultaneous localization and mapping (SLAM) provides efficient state estimation but lacks the continuous map representation and global refinement capabilities of neural implicit SLAM, while neural implicit methods remain computationally expensive. We propose Lightweight LiDAR–Inertial Neural SLAM (LIN-SLAM), a hybrid method that couples high-rate geometric LiDAR–inertial estimation with neural implicit tracking, continual mapping, and global refinement for accurate real-time onboard SLAM. Experiments on twelve representative sequences from three datasets spanning 32-, 64-, and 128-channel LiDAR configurations show that LIN-SLAM achieves the lowest overall mean absolute trajectory error (ATE) among the evaluated state-of-the-art geometric and neural implicit methods, while substantially reducing runtime compared with existing neural implicit SLAM methods. On a Unitree Go2 equipped with an NVIDIA Jetson Orin NX and a 16-channel LiDAR, LIN-SLAM sustains real-time localization and neural mapping over a 1.47-km indoor trajectory through challenging repetitive corridor environments, with an endpoint closure error of only 0.141 m. To the best of our knowledge, LIN-SLAM is the first LiDAR–inertial SLAM system with a neural implicit backend to achieve real-time online operation on a mobile robotic platform while maintaining state-of-the-art localization accuracy. The code will be released upon acceptance.</p><p class="metric-note">Abstract reproduced from the submitted manuscript; resource availability is listed below.</p><div class="keywords"><span>LiDAR–Inertial SLAM</span><span>Neural Implicit Mapping</span><span>Real-Time Robotics</span></div></div>
+    </section>
+
+    <section id="method" class="section wrap" aria-labelledby="method-title">
+      <div class="section-heading"><p class="eyebrow">How it works</p><h2 id="method-title">Fast local estimation. Global neural refinement.</h2><p>The geometric frontend estimates motion while the neural backend refines poses and builds a continuous map.</p></div>
+      <figure class="paper-figure pipeline"><div class="figure-image"><img src="assets/pipeline.png" alt="LIN-SLAM architecture: IMU propagation and rolling-sweep GICP–IESKF frontend, source-bound keyframe interface, neural tracking and mapping, and pose-graph optimization." width="1484" height="639" loading="lazy"></div><figcaption><span>Fig. 1.</span> LIN-SLAM system pipeline. The illustrated 40-Hz LiDAR sub-sweeps and approximately 300-Hz IMU correspond to the robot configuration.</figcaption></figure>
+      <div class="method-diagram" aria-label="Frontend and asynchronous neural backend data flow">
+        <div class="diagram-lane">
+          <p class="lane-label">High-rate geometry</p>
+          <div class="diagram-track">
+            <article class="diagram-node"><span class="number">INPUT</span><h3>LiDAR + IMU</h3><p>Sub-sweeps and inertial measurements</p></article>
+            <span class="diagram-arrow" aria-hidden="true">→</span>
+            <article class="diagram-node"><span class="number">FRONTEND</span><h3>GICP–IESKF</h3><p>Local motion, uncertainty and posterior-consistent scans</p></article>
+            <span class="diagram-arrow" aria-hidden="true">→</span>
+            <article class="diagram-node"><span class="number">OUTPUT</span><h3>Local odometry</h3><p>Continuous high-rate poses</p></article>
+          </div>
+        </div>
+        <div class="bundle-bridge"><span aria-hidden="true">↓</span><div><strong>Completed sweep → source-bound bundle</strong><p>Scan · source interval · terminal pose · covariance</p></div><span class="queue-label">1 in flight + 1 pending</span></div>
+        <div class="diagram-lane neural-lane">
+          <p class="lane-label">Asynchronous neural backend</p>
+          <div class="diagram-track">
+            <article class="diagram-node"><span class="number">TRACKING</span><h3>Refine the pose</h3><p>Frontend motion initializes tracking; uncertainty sets the first convergence check.</p></article>
+            <span class="diagram-arrow" aria-hidden="true">→</span>
+            <article class="diagram-node"><span class="number">MAPPING</span><h3>Learn the scene</h3><p>Neural-point features and an SDF decoder support continual mapping.</p></article>
+            <span class="diagram-arrow" aria-hidden="true">→</span>
+            <article class="diagram-node"><span class="number">LOOP CLOSURE</span><h3>Refine globally</h3><p>Accepted loop constraints drive pose-graph optimization and map updates.</p></article>
+          </div>
+        </div>
+        <div class="correction-path"><span aria-hidden="true">↳</span><span>Global correction + continuing local odometry</span><span aria-hidden="true">→</span><strong>Globally corrected high-rate poses</strong></div>
+        <p class="metric-note">Data-flow schematic, not an execution timeline. Pose uncertainty adjusts tracking effort; it does not add a pose-prior loss.</p>
+      </div>
+    </section>
+
+    <section id="results" class="section wrap" aria-labelledby="results-title">
+      <div class="section-heading"><p class="eyebrow">Evaluation</p><h2 id="results-title">Experimental results</h2><p>Paper results on 12 public sequences spanning 32-, 64-, and 128-channel LiDAR.</p></div>
+      <div class="subheading"><span>5.1</span><h3>Localization accuracy</h3></div>
+      <figure class="paper-figure trajectory-errors"><div class="figure-image"><img src="assets/trajectory-errors.png" alt="LIN-SLAM trajectories colored by translational absolute pose error: NCD01, NCD02, NCD05, NCD07, math_hard, quad_hard, Hall05 and Door01. Circles mark starts and crosses mark ends; each panel has its own color scale." width="4010" height="1990" loading="lazy"></div><figcaption>LIN-SLAM trajectories colored by translational absolute pose error (APE). Green indicates lower error and red higher error; each panel uses its own scale. Circles and crosses mark the start and end positions.</figcaption></figure>
+      <p>Translational ATE RMSE with rigid SE(3) alignment and no scale adjustment. Lower is better; bold indicates the best result.</p>
+      <div class="table-scroll" role="region" aria-label="Localization accuracy table" tabindex="0"><table id="accuracy-table"><caption>ATE RMSE [m] ↓ · all 12 sequences</caption><thead><tr><th scope="col">Sequence</th><th scope="col">PIN-SLAM</th><th scope="col">CLID-SLAM</th><th scope="col">FAST-LIO2</th><th scope="col">Point-LIO</th><th scope="col" class="ours">LIN-SLAM</th></tr></thead><tbody>
+        <tr class="group"><th colspan="6" scope="colgroup">Newer College Stereo-Cam · 64 beams</th></tr>
+        <tr><th scope="row">NCD01</th><td>0.357</td><td>0.859</td><td>0.344</td><td>0.347</td><td class="ours"><strong>0.284</strong></td></tr>
+        <tr><th scope="row">NCD02</th><td>0.351</td><td>1.139</td><td>0.357</td><td>0.317</td><td class="ours"><strong>0.314</strong></td></tr>
+        <tr><th scope="row">NCD05</th><td>0.217</td><td>0.126</td><td><strong>0.108</strong></td><td>0.192</td><td class="ours">0.139</td></tr>
+        <tr><th scope="row">NCD07</th><td>0.319</td><td>0.231</td><td>0.136</td><td><strong>0.135</strong></td><td class="ours">0.148</td></tr>
+        <tr class="group"><th colspan="6" scope="colgroup">Newer College Multi-Cam · 128 beams</th></tr>
+        <tr><th scope="row">math_easy</th><td>0.091</td><td><strong>0.071</strong></td><td>0.112</td><td>0.175</td><td class="ours">0.096</td></tr>
+        <tr><th scope="row">math_medium</th><td class="fail">Fail</td><td><strong>0.115</strong></td><td><strong>0.115</strong></td><td>0.117</td><td class="ours">0.141</td></tr>
+        <tr><th scope="row">math_hard</th><td class="fail">Fail</td><td>0.090</td><td>0.084</td><td>0.089</td><td class="ours"><strong>0.074</strong></td></tr>
+        <tr><th scope="row">quad_easy</th><td>0.095</td><td>0.078</td><td><strong>0.067</strong></td><td>0.071</td><td class="ours">0.073</td></tr>
+        <tr><th scope="row">quad_medium</th><td class="fail">Fail</td><td>0.064</td><td><strong>0.058</strong></td><td>0.079</td><td class="ours">0.065</td></tr>
+        <tr><th scope="row">quad_hard</th><td>0.176</td><td>0.095</td><td>0.151</td><td><strong>0.060</strong></td><td class="ours">0.069</td></tr>
+        <tr class="group"><th colspan="6" scope="colgroup">M2DGR · 32 beams</th></tr>
+        <tr><th scope="row">Hall05</th><td>1.031</td><td>1.182</td><td>1.159</td><td>1.158</td><td class="ours"><strong>1.005</strong></td></tr>
+        <tr><th scope="row">Door01</th><td><strong>0.271</strong></td><td>0.433</td><td>0.458</td><td>0.447</td><td class="ours">0.272</td></tr>
+      </tbody></table></div>
+      <p class="metric-note">PIN-SLAM fails on three Multi-Cam sequences. Its dataset-group averages include successful runs only.</p>
+
+      <div class="subheading"><span>5.2</span><h3>Computational efficiency</h3></div>
+      <p>Workstation experiments use dual Intel Xeon Gold 6530 CPUs and an NVIDIA RTX 5090. One frame denotes one complete physical LiDAR revolution.</p>
+      <figure class="paper-figure" style="max-width:760px;margin-inline:auto"><div class="figure-image"><img src="assets/profiling.svg" alt="Mean profiling time in milliseconds per full revolution: LIN-SLAM 49.211 on Stereo-Cam, 61.762 on Multi-Cam, and 60.419 on M2DGR, compared with PIN-SLAM and CLID-SLAM." width="720" height="370" loading="lazy"></div><figcaption><span>Per-frame profiling.</span> Dataset-group means from Table I. PIN-SLAM's Multi-Cam mean includes only its three successful sequences.</figcaption></figure>
+      <p class="callout">On Stereo-Cam, LIN-SLAM reduces mean profiling time by <strong>80.9%</strong> relative to PIN-SLAM and <strong>80.2%</strong> relative to CLID-SLAM.</p>
+
+      <div class="subheading"><span>5.3</span><h3>Neural reconstruction quality</h3></div>
+      <figure class="paper-figure"><div class="figure-image"><img src="assets/reconstruction.png" alt="Zero-level neural SDF surfaces: Quad on the top row and Math Institute on the bottom; PIN-SLAM, CLID-SLAM, and LIN-SLAM from left to right, using a matched view within each scene." width="4296" height="2310" loading="lazy"></div><figcaption>Reconstructed zero-level surfaces, shown from matched viewpoints. Left to right: PIN-SLAM, CLID-SLAM, and LIN-SLAM.</figcaption></figure>
+      <div class="table-scroll" role="region" aria-label="Reconstruction metrics" tabindex="0"><table><caption>3D reconstruction accuracy · Table II</caption><thead><tr><th scope="col">Scene / method</th><th scope="col">Accuracy<br>[cm] ↓</th><th scope="col">Completeness<br>[cm] ↓</th><th scope="col">Chamfer-L1<br>[cm] ↓</th><th scope="col">F-score<br>[%] ↑</th></tr></thead><tbody>
+        <tr class="group"><th colspan="5" scope="colgroup">Quad</th></tr><tr><th scope="row">PIN-SLAM</th><td>10.768</td><td>20.346</td><td>15.557</td><td>79.08</td></tr><tr><th scope="row">CLID-SLAM</th><td>12.060</td><td>15.435</td><td>13.748</td><td>86.06</td></tr><tr class="ours"><th scope="row">LIN-SLAM</th><td><strong>8.940</strong></td><td><strong>13.684</strong></td><td><strong>11.312</strong></td><td><strong>87.84</strong></td></tr>
+        <tr class="group"><th colspan="5" scope="colgroup">Math Institute</th></tr><tr><th scope="row">PIN-SLAM</th><td>16.659</td><td>17.126</td><td>16.892</td><td>81.66</td></tr><tr><th scope="row">CLID-SLAM</th><td>15.833</td><td>16.163</td><td>15.998</td><td>82.86</td></tr><tr class="ours"><th scope="row">LIN-SLAM</th><td><strong>14.523</strong></td><td><strong>15.455</strong></td><td><strong>14.989</strong></td><td><strong>85.31</strong></td></tr>
+      </tbody></table></div><p class="metric-note">Accuracy and completeness measure reconstruction-to-reference and reference-to-reconstruction distances; Chamfer-L1 averages the two. F-score combines precision and recall. All methods share the same evaluation settings.</p>
+
+      <div class="subheading"><span>5.4</span><h3>Controlled backend comparison</h3></div>
+      <p>The two implementations use identical NCD01 keyframes, initialization, samples, network architecture, replay data, and optimization settings.</p>
+      <div class="table-scroll" role="region" aria-label="Backend execution comparison" tabindex="0"><table><caption>Neural backend · mean / P95</caption><thead><tr><th scope="col">Metric</th><th scope="col">Tensor implementation</th><th scope="col" class="ours">Optimized C++/CUDA</th></tr></thead><tbody><tr><th scope="row">Tracking [ms]</th><td>79.674 / 167.922</td><td class="ours">35.076 / 58.016</td></tr><tr><th scope="row">Mapping [ms]</th><td>130.901 / 139.378</td><td class="ours">29.545 / 31.890</td></tr><tr><th scope="row">Backend total [ms]</th><td>246.278 / 361.939</td><td class="ours"><strong>82.605 / 107.777</strong></td></tr><tr><th scope="row">Final ATE RMSE [m]</th><td>0.2918</td><td class="ours">0.2835</td></tr></tbody></table></div><p class="metric-note">Mean backend processing time is reduced by 66.5%. Times are measured per keyframe on the workstation, not as end-to-end pose latency.</p>
+    </section>
+
+    <section id="deployment" class="section deployment wrap" aria-labelledby="deployment-title">
+      <div class="section-heading"><p class="eyebrow">Beyond the workstation</p><h2 id="deployment-title">Onboard deployment</h2><p>LIN-SLAM runs localization and neural mapping concurrently at the original 1× sensor rate on a Unitree Go2, equipped with a Jetson Orin NX and a 16-channel Hesai XT16.</p></div>
+      <div id="deployment-films" class="film-showcase" aria-label="Deployment videos">
+        <div class="film-panels">
+          <article id="film-corridor" class="film-panel" data-scene="Corridor" data-description="Repetitive indoor passages · 1.47 km">
+            <h4>Corridor — repetitive indoor passages</h4>
+            <video controls playsinline preload="none" poster="assets/videos/corridor-poster.jpg" aria-label="Corridor: final neural map and trajectory gradually revealed">
+              <source src="assets/videos/corridor.mp4" type="video/mp4">
+              Your browser does not support embedded video. <a href="assets/videos/corridor.mp4">Download the Corridor video</a>.
+            </video>
+          </article>
+          <article id="film-basement" class="film-panel" data-scene="Basement" data-description="Underground parking aisles · 0.86 km">
+            <h4>Basement — underground parking aisles</h4>
+            <video controls playsinline preload="none" poster="assets/videos/basement-poster.jpg" aria-label="Basement: final neural map and trajectory gradually revealed">
+              <source src="assets/videos/basement.mp4" type="video/mp4">
+              Your browser does not support embedded video. <a href="assets/videos/basement.mp4">Download the Basement video</a>.
+            </video>
+          </article>
+        </div>
+        <p class="film-note">Animated visualization of the final maps and PGO trajectories—not a live mapping recording.</p>
+      </div>
+      <figure class="paper-figure"><div class="figure-image"><img src="assets/onboard-maps.png" alt="Corridor and Basement neural point maps from the Go2 onboard deployments, with final trajectories and start/end positions." width="8592" height="2820" loading="lazy"></div><figcaption>Learned neural point maps and final globally corrected trajectories. Green and red markers indicate the start and end positions.</figcaption></figure>
+      <div class="route-comparison" aria-label="Onboard route scale and scene characteristics">
+        <div class="route-comparison-heading"><h3>Two challenging indoor environments</h3></div>
+        <div class="route-cards">
+          <article class="route-card">
+            <p class="eyebrow">CORRIDOR</p><h4>Repetitive indoor passages</h4>
+            <div class="route-distance"><strong>1.47 <small>km</small></strong><span>route length</span></div>
+            <dl class="route-facts"><div><dt>Duration</dt><dd>22.03 <small>min</small></dd></div><div><dt>Spatial extent</dt><dd>216 × 156 <small>m</small></dd></div><div><dt>Accepted loops</dt><dd>23</dd></div></dl>
+            <ul class="scene-tags" aria-label="Corridor challenges"><li>Long corridors</li><li>Repeated layouts</li><li>Multiple revisits</li></ul>
+          </article>
+          <article class="route-card">
+            <p class="eyebrow">BASEMENT</p><h4>Parking aisles &amp; occlusions</h4>
+            <div class="route-distance"><strong>0.86 <small>km</small></strong><span>route length</span></div>
+            <dl class="route-facts"><div><dt>Duration</dt><dd>13.99 <small>min</small></dd></div><div><dt>Spatial extent</dt><dd>92 × 108 <small>m</small></dd></div><div><dt>Accepted loops</dt><dd>22</dd></div></dl>
+            <ul class="scene-tags" aria-label="Basement challenges"><li>Pillar rows</li><li>Vehicles</li><li>Partial occlusions</li></ul>
+          </article>
+        </div>
+      </div>
+      <div class="table-scroll" role="region" aria-label="LIN-SLAM embedded performance" tabindex="0"><table><caption>LIN-SLAM on Jetson Orin NX · paper runs</caption><thead><tr><th scope="col">Metric</th><th scope="col">Corridor</th><th scope="col">Basement</th></tr></thead><tbody><tr><th scope="row">Endpoint closure error [m]</th><td>0.141</td><td>0.073</td></tr><tr><th scope="row">Profiling time per full revolution [ms]</th><td>84.875</td><td>88.401</td></tr><tr><th scope="row">Input sensor rate</th><td>1×</td><td>1×</td></tr></tbody></table></div>
+      <p class="callout">Without external ground truth, we report endpoint closure error: the estimated start-to-end distance after returning to the start. This measures closure consistency, not trajectory-wide ATE. Results use the final globally corrected trajectories.</p>
+    </section>
+
+    <section id="resources" class="section wrap" aria-labelledby="resources-title">
+      <div class="section-heading"><p class="eyebrow">Explore &amp; reproduce</p><h2 id="resources-title">Resources</h2><p>Run the same SLAM pipeline on public datasets or a robot using the supplied sensor and platform profiles.</p></div>
+      <div class="resource-list">
+        <a href="https://github.com/SQ-Che/LIN-SLAM"><span class="resource-number">01</span><div><h3>Source code</h3><p>LIN-SLAM implementation, sequence configurations, and replay scripts.</p></div><span aria-hidden="true">↗</span></a>
+        <a href="https://github.com/SQ-Che/LIN-SLAM#quick-start"><span class="resource-number">02</span><div><h3>Installation &amp; quick start</h3><p>Set up the environment, build LIN-SLAM, and run a complete sequence.</p></div><span aria-hidden="true">↗</span></a>
+        <a href="https://github.com/SQ-Che/LIN-SLAM#3-prepare-the-datasets"><span class="resource-number">03</span><div><h3>Dataset setup &amp; replay</h3><p>Prepare the recordings and ground truth, then run a dataset sequence.</p></div><span aria-hidden="true">↗</span></a>
+        <a href="https://github.com/SQ-Che/LIN-SLAM#evaluate"><span class="resource-number">04</span><div><h3>Trajectory evaluation</h3><p>Evaluate exported trajectories against the dataset ground truth.</p></div><span aria-hidden="true">↗</span></a>
+        <a href="https://github.com/SQ-Che/LIN-SLAM#run-on-go2--jetson-orin-nx"><span class="resource-number">05</span><div><h3>Onboard setup</h3><p>Go2 / Jetson Orin NX installation, build, and live SLAM instructions.</p></div><span aria-hidden="true">↗</span></a>
+        <a href="https://drive.google.com/drive/folders/1ouinjgOHqANCxBgnhS7We6fhYK_sGj2u?usp=drive_link"><span class="resource-number">06</span><div><h3>Corridor dataset</h3><p>Download the Corridor sequence (bag_08211) from Google Drive.</p></div><span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="resource-notes"><article><h3>Public datasets</h3><p>Download the original recordings and ground truth from <a href="https://ori-drs.github.io/newer-college-dataset/">Newer College</a> (Stereo-Cam and Multi-Cam) and <a href="https://github.com/SJTU-ViSYS/M2DGR">M2DGR</a>. Follow the dataset setup guide above to replay the original bags.</p></article><article><h3>Corridor &amp; Basement</h3><p>See the <a href="https://github.com/SQ-Che/LIN-SLAM#5-replay-corridor-or-basement">robot-sequence replay guide</a> for bag layout and one-command runs, and <a href="https://github.com/SQ-Che/LIN-SLAM#configuration-and-input">configuration and input</a> for sensor topics and profiles.</p></article></div>
+    </section>
+
+    <section id="citation" class="section citation wrap" aria-labelledby="citation-title">
+      <div class="section-heading"><p class="eyebrow">Reference this work</p><h2 id="citation-title">Citation</h2><p>If you use LIN-SLAM in your research, please cite our <a href="https://arxiv.org/abs/2610.21199">arXiv preprint</a>.</p></div>
+      <div class="citation-box"><div class="code-toolbar"><span>BibTeX · arXiv</span><button id="copy-bibtex" type="button">Copy BibTeX</button></div><pre><code id="bibtex">@misc{che2026linslam,
+  title         = {{LIN-SLAM}: Lightweight {LiDAR}-Inertial Neural {SLAM}
+                   for Real-Time Onboard Navigation},
+  author        = {Che, Shiqi and Liu, Yijie and Wang, Shuo and Liu, Wenxin},
+  year          = {2026},
+  eprint        = {2610.21199},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.RO},
+  url           = {https://arxiv.org/abs/2610.21199}
+}</code></pre><p id="copy-status" role="status" aria-live="polite"></p></div>
+    </section>
+  </main>
+  <footer class="wrap footer"><a class="wordmark" href="#top">LIN<span>–</span>SLAM</a><p>LiDAR–inertial estimation and neural mapping for onboard navigation.</p><a href="#top">Back to top ↑</a></footer>
+</body>
+</html>

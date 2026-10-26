@@ -1,0 +1,20 @@
+{
+  "profiling_ms_per_revolution": {
+    "PIN-SLAM": [
+      257.358,
+      184.386,
+      250.518
+    ],
+    "CLID-SLAM": [
+      248.446,
+      191.349,
+      180.859
+    ],
+    "LIN-SLAM": [
+      49.211,
+      61.762,
+      60.419
+    ]
+  },
+  "profiling_source": "Paper Table I; PIN Multi-Cam excludes failed sequences."
+}
